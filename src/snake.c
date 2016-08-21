@@ -15,28 +15,7 @@ enum INITIAL_SNAKE_SETTING
 
 };
 
-struct snake
-{
-	struct cell *head;
-
-	float speed;
-
-	static int (*init)(struct snake *snake);
-	static void (*grow)(struct snake *snake, struct cell *new_cell);
-	static void (*move)(struct snake *snake, int delta_x, int delta_y);
-};
-
-struct snake create_snake()
-{
-	struct snake *new_snake;
-	new_snake = malloc(sizeof(struct snake));
-
-	new_snake->init = init_snake;
-
-	return
-}
-
-static int init_snake(struct snake *snake)
+int snk_init(struct snake *snake)
 {
 	int i;
 	struct cell new_cell;
@@ -49,13 +28,10 @@ static int init_snake(struct snake *snake)
 
 	snake->speed = INIT_SPEED;
 
-	snake->grow = grow_snake;
-	snake->move = move_snake;
-
 	return 0;
 }
 
-static void grow_snake(struct snake *snake, struct cell *new_cell)
+void snk_grow(struct snake *snake, struct cell *new_cell)
 {
 	struct cell *next_cell, *prev_cell;
 
@@ -81,13 +57,14 @@ static void grow_snake(struct snake *snake, struct cell *new_cell)
 	}
 }
 
-
-static void move_snake(struct snake *snake, int delta_x, int delta_y)
+void snk_move(struct snake *snake, enum direction dir)
 {
 	struct cell *new_head = snake->head->previous;
 
-	int new_head_x = snake->head->x + delta_x;
-	int new_head_y = snake->head->y + delta_y;
+	// int new_head_x = snake->head->x + delta_x;
+	// int new_head_y = snake->head->y + delta_y;
+
+
 
 	place_cell(new_head, new_head_x, new_head_y);
 

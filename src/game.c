@@ -5,81 +5,79 @@
  *      Author: manicarus
  */
 
-#include "game.h"
-#include "allegro.h"
+#include "../include/game.h"
 
-enum INITIAL_GAME_SETTING
+
+void gm_init(struct Game *game)
 {
-	DISPLAY_W = 640,
-	DISPLAY_H = 480,
-	FPS       = 60
-};
+	stf_init_all(game->staff);
+	snk_init(game->snake);
+}
 
-enum game_state
+void gm_update(struct Game *game)
 {
-	GAME_OVER = 0
-};
+	ALLEGRO_EVENT ev;
+	stf_get_event(game->staff, &ev);
 
-struct alleg
-{
-	ALLEGRO_DISPLAY     *display;
-	ALLEGRO_EVENT_QUEUE *event_queue;
-	ALLEGRO_TIMER       *timer;
-};
+	if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
+	{
 
-struct game
-{
-	struct snake snake;
-	struct alleg allegro_setup;
-
-	enum game_state game_state;
-};
-
-void init_game(struct game *game)
-{
-	init_snake_game(game->snake_game);
-
-	game->game_state = !GAME_OVER;
-
-	// init allegro
-	struct alleg *allegro_setup = game->allegro_setup;
-
-	if(!al_init()) {
-	    perror(stderr, "failed to initialize allegro!\n");
 	}
+	else if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
+	{
+		switch(ev.keyboard.keycode)
+		{
+		    case ALLEGRO_KEY_UP:
+		        key[KEY_UP] = true;
+		    	break;
 
-	if(!al_install_keyboard()) {
-	    perror(stderr, "failed to initialize the keyboard!\n");
+		    case ALLEGRO_KEY_DOWN:
+		        key[KEY_DOWN] = true;
+		        break;
+
+		    case ALLEGRO_KEY_LEFT:
+		        key[KEY_LEFT] = true;
+		        break;
+
+		    case ALLEGRO_KEY_RIGHT:
+		        key[KEY_RIGHT] = true;
+		        break;
+		}
 	}
+	else if(ev.type == ALLEGRO_EVENT_KEY_UP)
+	{
+		switch(ev.keyboard.keycode)
+		{
+            case ALLEGRO_KEY_UP:
+            	key[KEY_UP] = false;
+            	break;
 
-	allegro_setup->timer = al_create_timer(1.0 / FPS);
-	if(!allegro_setup->timer) {
-		fprintf(stderr, "failed to create timer!\n");
-	}
+            case ALLEGRO_KEY_DOWN:
+            	key[KEY_DOWN] = false;
+            	break;
 
-	allegro_setup->display = al_create_display(SCREEN_W, SCREEN_H);
-	if(!allegro_setup->display) {
-		al_destroy_timer(allegro_setup->timer);
-		perror(stderr, "failed to create display!\n");
+            case ALLEGRO_KEY_LEFT:
+            	key[KEY_LEFT] = false;
+            	break;
+
+            case ALLEGRO_KEY_RIGHT:
+            	key[KEY_RIGHT] = false;
+            	break;
+         }
 	}
 }
 
-void update_game(struct game *game)
-{
-
-}
-
-void render_game()
-{
-
-}
-
-void release_game(struct game *game)
+void gm_render()
 {
 
 }
 
-int is_game_over(struct game *game)
+void gm_release(struct Game *game)
 {
-	return !(game->game_state);
+	stf_destroy_all(game->staff);
+}
+
+int is_game_over(struct Game *game)
+{
+
 }

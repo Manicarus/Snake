@@ -5,22 +5,21 @@
  *      Author: manicarus
  */
 
-#include <stdio.h>
-#include "game.h"
+#include "../include/game.h"
 
 int main()
 {
-	struct game game;
+	struct Game game;
 
-	init(game);
+	gm_init(&game);
 
 	while(!is_game_over())
 	{
-		update();
-		render();
+		gm_update(&game);
+		gm_render(&game);
 	}
 
-	release();
+	gm_release(&game);
 
 	return 0;
 }

@@ -9,43 +9,53 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct cell *create_cell()
+struct Cell *c_create()
 {
-	struct cell *new_cell;
-	new_cell = malloc(sizeof(struct cell));
+	struct Cell *new_cell;
 
+	new_cell = malloc(sizeof(struct Cell));
 	if(!new_cell)
 	{
-		perror("failed to create a new cell!\n");
+		perror("Failed to create a new cell!\n");
 	}
-
-	new_cell->init    = init_cell;
-	new_cell->destroy = destroy_cell;
-	new_cell->move    = move_cell;
-	new_cell->place   = place_cell;
 
 	return new_cell;
 }
 
-static void destroy_cell(struct cell *cell)
+void c_destroy(struct Cell *cell)
 {
 	free(cell);
 }
 
-static void init_cell(struct cell *cell, int x, int y)
+void c_link(struct Cell *cell_a, struct Cell *cell_b)
 {
-	cell->x = x;
-	cell->y = y;
+
 }
 
-static void move_cell(struct cell *cell, int delta_x, int delta_y)
+void c_move(struct Cell *cell, int delta_x, int delta_y)
 {
-	cell->x += delta_x;
-	cell->y += delta_y;
+	// cell->x += delta_x;
+	// cell->y += delta_y;
+	set_x(cell, get_x(cell) + delta_x);
+	set_y(cell, get_y(cell) + delta_y);
 }
 
-static void place_cell(struct cell *cell, int x, int y)
+static void set_x(struct Cell *cell, int x)
 {
-	cell->x = x;
-	cell->y = y;
+
+}
+
+static void set_y(struct Cell *cell, int y)
+{
+
+}
+
+static int get_x(struct Cell *cell)
+{
+
+}
+
+static int get_y(struct Cell *cell)
+{
+
 }
