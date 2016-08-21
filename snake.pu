@@ -1,0 +1,56 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+Snake *-- Cell
+Game *-- Snake
+Game *-- Staff
+
+class Staff {
+    - display     : ALLEGRO_DISPLAY *
+    - timer       : ALLEGRO_TIMER *
+    - event_queue : ALLEGRO_EVENT_QUEUE *
+
+    + stf_init_all(staff: struct Staff *)
+    - stf_init_display(staff: struct Staff *)
+    - stf_init_input(staff: struct Staff *)
+    - stf_init_timer(staff: struct Staff *)
+    - stf_init_event_queue(staff: struct Staff *)
+}
+
+class Cell {
+    - x: int
+    - y: int
+    - color: enum Color
+
+    + c_move()
+    + c_insert()
+    - set_color(color: enum Color)
+    - set_x(x: int)
+    - set_y(y: int)
+    - get_x(): int
+    - get_y(): int
+}
+
+class Snake {
+    - head: struct Cell *
+    - speed: float
+
+    + snk_init()
+    + snk_move()
+    + snk_grow()
+}
+
+class Game {
+    - snake: struct Snake
+    - staff: struct Staff
+    - game_state: enum GameState
+
+    + gm_init(game: struct Game *)
+    + gm_update(game: struct Game *)
+    + gm_render(game: struct Game *)
+    + gm_release(game: struct Game *)
+    + is_game_over(game: struct Game *)
+}
+
+@enduml
