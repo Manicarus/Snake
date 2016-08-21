@@ -8,18 +8,33 @@
 #ifndef SNAKE_H_
 #define SNAKE_H_
 
+#include "cell.h"
+
 struct init_set_val;
 
-struct snake;
+enum direction
+{
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+};
+
+struct snake
+{
+	struct Cell *head;
+
+	float speed;
+};
 
 struct snake create_snake();
 
-static void destory_snake();
+void destory_snake();
 
-static int init_snake(struct snake *snake);
+int snk_init(struct snake *snake);
 
-static void grow_snake(struct snake *snake, struct cell *new_cell);
+void snk_grow(struct snake *snake, struct cell *new_cell);
 
-static void move_snake(struct snake *snake, int delta_x, int delta_y);
+void snk_move(struct snake *snake, int delta_x, int delta_y);
 
 #endif /* SNAKE_H_ */

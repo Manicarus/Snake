@@ -8,18 +8,29 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-enum game_state;
+#include "snake.h"
+#include "staff.h"
 
-void create_game();
+enum GameState
+{
+	GAME_OVER = 0
+};
 
-void init_game(struct game *game);
+struct Game
+{
+	struct Snake snake;
+	struct Staff staff;
+    enum GameState game_state;
+};
 
-void update_game(struct game *game);
+void gm_init(struct Game *game);
 
-void render_game();
+void gm_update(struct Game *game);
 
-void release_game(struct game *game);
+void gm_render(struct Game *game);
 
-int is_game_over();
+void gm_release(struct Game *game);
+
+int is_game_over(struct Game *game);
 
 #endif /* GAME_H_ */

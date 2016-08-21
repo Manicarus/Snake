@@ -8,26 +8,29 @@
 #ifndef CELL_H_
 #define CELL_H_
 
-struct cell
+enum Color
 {
-	int x, y;
-
-	struct cell *previous, *next;
-
-	void (*destroy)(struct cell *);
-	void (*init   )(struct cell *, int, int);
-	void (*move   )(struct cell *, int, int);
-	void (*place  )(struct cell *, int, int);
+	RED,
+	GREEN
 };
 
-struct cell *create_cell();
+struct Cell
+{
+	int x, y;
+	enum Color color;
+	struct Cell *previous, *next;
+};
 
-static void destroy_cell(struct cell *cell);
+// public
+struct Cell *c_create();
+void c_kill(struct Cell *cell);
+void c_link(struct Cell *cell_a, struct Cell *cell_b);
 
-static void init_cell(struct cell *cell, int x, int y);
+// private
+static void set_x(struct Cell *cell, int x);
+static void set_y(struct Cell *cell, int y);
 
-static void move_cell(struct cell *cell, int delta_x, int delta_y);
-
-static void place_cell(struct cell *cell, int x, int y);
+static int get_x(struct Cell *cell);
+static int get_y(struct Cell *cell);
 
 #endif /* CELL_H_ */
