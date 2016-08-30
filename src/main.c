@@ -24,7 +24,8 @@ int main()
         if(game_get_state(&game) == GAME_OVER)
         {
             // al_clear_to_color(al_map_rgb(0,0,0));
-
+            // al_load_ttf_font() 함수를 al_destroy_font()를 호출하지 않고
+            // 무한 반복해서 호출하면 segmentation fault가 발생한다.
             al_draw_text(
                 al_load_ttf_font("CONTFO__.ttf", 100, ALLEGRO_TTF_MONOCHROME),
                 al_map_rgb(0, 255, 0),
