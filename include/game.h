@@ -8,29 +8,82 @@
 #ifndef GAME_H_
 #define GAME_H_
 
+#include <allegro.h>
 #include "snake.h"
-#include "staff.h"
+#include "boundary.h"
+#include "score.h"
+#include "apple.h"
 
-enum GameState
+#define GAME_INIT_DISPLAY_W 640
+#define GAME_INIT_DISPLAY_H 480
+#define GAME_INIT_FPS  20
+#define GAME_INPUT_NUM 5
+#define GAME_MAX_APPLE_NUM 10
+
+enum game_state
 {
-	GAME_OVER = 0
+	GAME_OVER,
+	PLAYING,
+	EXIT
 };
 
-struct Game
+enum key_code
 {
-	struct Snake snake;
-	struct Staff staff;
-    enum GameState game_state;
+	KEY_UP = 0,
+	KEY_DOWN,
+	KEY_LEFT,
+	KEY_RIGHT,
+	KEY_PAUSE,
+	KEY_ENTER
 };
 
-void gm_init(struct Game *game);
+struct game
+{
+	struct snake player;
+	struct boundary world;
+	struct score board;
+	struct apple treat;
 
-void gm_update(struct Game *game);
+	enum game_state state;
 
-void gm_render(struct Game *game);
+	bool key[GAME_INPUT_NUM];
+	bool is_game_over;
 
-void gm_release(struct Game *game);
+	int display_w;
+	int display_h;
+	int fps;
 
-int is_game_over(struct Game *game);
+	ALLEGRO_BITMAP *boundary;
+	ALLEGRO_DISPLAY *display;
+	ALLEGRO_TIMER *fps_timer;
+	ALLEGRO_TIMER *player_timer;
+	ALLEGRO_EVENT_QUEUE *event_queue;
+};
+
+int game_init(struct game *self);
+
+void game_update(struct game *self);
+
+void game_render(struct game *self);
+
+void game_release(struct game *self);
+
+void game_set_display_w(struct game *self, int w);
+
+void game_set_display_h(struct game *self, int h);
+
+int game_get_display_w(struct game *self);
+
+int game_get_display_h(struct game *self);
+
+void game_set_fps(struct game *self, float new_fps);
+
+float game_get_fps(struct game *self);
+
+void game_set_state(struct game *self, enum game_state state);
+
+enum game_state game_get_state(struct game *self);
+
+void game_clear_key(struct game *self);
 
 #endif /* GAME_H_ */
