@@ -5,47 +5,52 @@
  *      Author: manicarus
  */
 
-#include "snake.h"
+#include "../include/snake.h"
 
-enum INITIAL_SNAKE_SETTING
+int snake_init(struct snake *self, int head_x, int head_y)
 {
-	INIT_HEAD_X = 320,
-	INIT_HEAD_Y = 240,
-	INIT_SPEED  = 1
+	struct cell *new_cell;
 
-};
+	self->head = NULL;
 
-int snk_init(struct snake *snake)
-{
-	int i;
-	struct cell new_cell;
+	snake_set_speed(self, SNAKE_INIT_SPEED);
+	snake_set_direction(self, SNAKE_INIT_DIRECTION);
+	snake_set_length(self, 0);
 
-	for(i = 0; i < 3; i++)
+	while(snake_get_length(self) < SNAKE_INIT_LENGTH)
 	{
-		new_cell = create_cell(INIT_HEAD_X, INIT_HEAD_Y + i);
-		grow_snake(snake, new_cell);
-	}
+		new_cell = cell_create();
+		cell_init_default(new_cell);
 
-	snake->speed = INIT_SPEED;
+		cell_set_x(new_cell, head_x);
+		cell_set_y(new_cell, head_y
+			+ snake_get_length(self)
+			* snake_get_unit_move_y(self)
+		);
+
+		snake_grow(self, new_cell);
+	}
 
 	return 0;
 }
 
-void snk_grow(struct snake *snake, struct cell *new_cell)
+void snake_grow(struct snake *self, struct cell *new_cell)
 {
 	struct cell *next_cell, *prev_cell;
 
-	if(!(snake->head))
-	{
-		snake->head = new_cell;
+	cell_set_color(new_cell, GREEN);
 
-		snake->head->next     = snake->head;
-		snake->head->previous = snake->head;
+	if(!(self->head))
+	{
+		self->head = new_cell;
+
+		self->head->next     = self->head;
+		self->head->previous = self->head;
 	}
 	else
 	{
-		next_cell = snake->head;
-		prev_cell = snake->head->previous;
+		next_cell = self->head;
+		prev_cell = self->head->previous;
 
 		new_cell->next     = next_cell;
 		new_cell->previous = prev_cell;
@@ -53,20 +58,142 @@ void snk_grow(struct snake *snake, struct cell *new_cell)
 		next_cell->previous = new_cell;
 		prev_cell->next     = new_cell;
 
-		snake->head = new_cell;
+		self->head = new_cell;
 	}
+
+	snake_set_length(self, (snake_get_length(self) + 1));
+	//self->length++;
 }
 
-void snk_move(struct snake *snake, enum direction dir)
+void snake_kill(struct snake *self)
 {
-	struct cell *new_head = snake->head->previous;
 
-	// int new_head_x = snake->head->x + delta_x;
-	// int new_head_y = snake->head->y + delta_y;
+}
 
+void snake_draw(struct snake *self)
+{
+	struct cell* index = self->head;
 
+	do
+	{
+		cell_draw(index);
+		index = index->next;
+	}
+	while(index != self->head);
+}
 
-	place_cell(new_head, new_head_x, new_head_y);
+void snake_move(struct snake *self, enum direction dir)
+{
+	struct cell *new_head = self->head->previous;
 
-	snake->head = new_head;
+	int new_head_x;
+	int new_head_y;
+
+	if(dir == UP)
+	{
+		new_head_x = self->head->x;
+		new_head_y = self->head->y - snake_get_unit_move_y(self);
+	}
+	else if(dir == DOWN)
+	{
+		new_head_x = self->head->x;
+		new_head_y = self->head->y + snake_get_unit_move_y(self);
+	}
+	else if(dir == LEFT)
+	{
+		new_head_x = self->head->x - snake_get_unit_move_x(self);
+		new_head_y = self->head->y;
+	}
+	else if(dir == RIGHT)
+	{
+		new_head_x = self->head->x + snake_get_unit_move_x(self);
+		new_head_y = self->head->y;
+	}
+
+	cell_set_x(new_head, new_head_x);
+	cell_set_y(new_head, new_head_y);
+
+	self->head = new_head;
+}
+
+void snake_set_speed(struct snake *self, float new_speed)
+{
+	self->speed = new_speed;
+}
+
+float snake_get_speed(struct snake *self)
+{
+	return self->speed;
+}
+
+int snake_get_unit_move_x(struct snake *self)
+{
+	return cell_get_w();
+}
+
+int snake_get_unit_move_y(struct snake *self)
+{
+	return cell_get_h();
+}
+
+struct cell *snake_get_head(struct snake *self)
+{
+	return self->head;
+}
+
+void snake_set_direction(struct snake *self, enum direction new_dir)
+{
+	self->dir = new_dir;
+}
+
+enum direction snake_get_direction(struct snake *self)
+{
+	return self->dir;
+}
+
+int snake_get_length(struct snake *self)
+{
+	return self->length;
+}
+
+void snake_set_length(struct snake *self, int new_length)
+{
+	self->length = new_length;
+}
+
+bool snake_is_bounded(
+	struct snake *self,
+	struct boundary *world
+)
+{
+	struct cell* index = self->head;
+
+	do
+	{
+		if(!cell_is_bounded(index, world))
+		{
+			return false;
+		}
+		index = index->next;
+	}
+	while(index != self->head);
+
+	return true;
+}
+
+bool snake_is_self_bumped(struct snake *self)
+{
+	struct cell *index = self->head->next;
+
+	do
+	{
+		if(cell_is_overlapped(self->head, index))
+		{
+			return true;
+		}
+		index = index->next;
+	}
+	while(index != self->head);
+
+	return false;
 }

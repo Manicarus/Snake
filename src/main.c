@@ -6,20 +6,59 @@
  */
 
 #include "../include/game.h"
+#include <allegro_font.h>
+#include <allegro_ttf.h>
 
+// TODO: organize gameflow
 int main()
 {
-	struct Game game;
+    struct game game;
 
-	gm_init(&game);
+    game_init(&game);
 
-	while(!is_game_over())
-	{
-		gm_update(&game);
-		gm_render(&game);
-	}
+    while(game_get_state(&game) != EXIT)
+    {
+        game_update(&game);
+        game_render(&game);
 
-	gm_release(&game);
+        if(game_get_state(&game) == GAME_OVER)
+        {
+            // al_clear_to_color(al_map_rgb(0,0,0));
 
-	return 0;
+            al_draw_text(
+                al_load_ttf_font("CONTFO__.ttf", 100, ALLEGRO_TTF_MONOCHROME),
+                al_map_rgb(0, 255, 0),
+                320,
+                170,
+                ALLEGRO_ALIGN_CENTRE,
+                "GAME OVER"
+            );
+
+            al_draw_text(
+                al_load_ttf_font("CONTFO__.ttf", 50, ALLEGRO_TTF_MONOCHROME),
+                al_map_rgb(0, 255, 0),
+                200,
+                300,
+                ALLEGRO_ALIGN_CENTRE,
+                "RETRY"
+            );
+
+            al_draw_text(
+                al_load_ttf_font("CONTFO__.ttf", 50, ALLEGRO_TTF_MONOCHROME),
+                al_map_rgb(0, 255, 0),
+                440,
+                300,
+                ALLEGRO_ALIGN_CENTRE,
+                "EXIT"
+            );
+
+            al_flip_display();
+
+            while(game_get_state(&game) == GAME_OVER);
+        }
+    }
+
+    game_release(&game);
+
+    return 0;
 }
